@@ -111,7 +111,7 @@ static void plis_(int *nf, int *nb, double *x, int *
 		  double *minf_est, double *gmax,
 		  double *f, int *mit, int *mfv, int *iest, int *mf,
 		  int *iterm, stat_common *stat_1,
-		  nlopt_func objgrad, void *objgrad_data)
+		  nlopt_func objgrad, nlopt_precond pre, void *objgrad_data)
 {
     /* System generated locals */
     int i__1;
@@ -303,6 +303,7 @@ L11130:
     luksan_mxdrcb__(nf, &k, &xo[1], &go[1], &uo[1], &vo[1], &s[1], &ix[1], &
 	    kbf);
     a = luksan_mxudot__(nf, &go[1], &go[1], &ix[1], &kbf);
+    if (pre) pre(*nf, &x[1], &s[1], &s[1], objgrad_data);
     if (a > 0.) {
 	d__1 = b / a;
 	luksan_mxvscl__(nf, &d__1, &s[1], &s[1]);
@@ -321,7 +322,8 @@ L12620:
 /*     STEEPEST DESCENT DIRECTION */
 
 	luksan_mxuneg__(nf, &gf[1], &s[1], &ix[1], &kbf);
-	snorm = gnorm;
+    if (pre) pre(*nf, &x[1], &s[1], &s[1], objgrad_data);
+    snorm = sqrt(luksan_mxudot__(nf, &s[1], &s[1], &ix[1], &kbf));
 	if (kit < stat_1->nit) {
 	    ++stat_1->nres;
 	    kit = stat_1->nit;
@@ -417,7 +419,7 @@ L11190:
 } /* plis_ */
 
 /* NLopt wrapper around plis_, handling dynamic allocation etc. */
-nlopt_result luksan_plis(int n, nlopt_func f, void *f_data,
+nlopt_result luksan_plis(int n, nlopt_func f, nlopt_precond pre, void *f_data,
 		  const double *lb, const double *ub, /* bounds */
 		  double *x, /* in: initial guess, out: minimizer */
 		  double *minf,
@@ -491,7 +493,7 @@ nlopt_result luksan_plis(int n, nlopt_func f, void *f_data,
 	   &iest,
 	   &mf,
 	   &iterm, &stat,
-	   f, f_data);
+	   f, pre, f_data);
 
      free(work);
      free(ix);

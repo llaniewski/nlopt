@@ -9,7 +9,7 @@ extern "C"
 {
 #endif /* __cplusplus */
 
-nlopt_result luksan_plis(int n, nlopt_func f, void *f_data,
+nlopt_result luksan_plis(int n, nlopt_func f, nlopt_precond pre, void *f_data,
 			 const double *lb, const double *ub, /* bounds */
 			 double *x, /* in: initial guess, out: minimizer */
 			 double *minf,

@@ -715,7 +715,7 @@ static nlopt_result nlopt_optimize_(nlopt_opt opt, double *x, double *minf)
 
     case NLOPT_LD_LBFGS:
 #ifdef NLOPT_LUKSAN
-        return luksan_plis(ni, f, f_data, lb, ub, x, minf, &stop, opt->vector_storage, nlopt_get_param(opt, "tolg", 0.));
+        return luksan_plis(ni, f, opt->pre, f_data, lb, ub, x, minf, &stop, opt->vector_storage, nlopt_get_param(opt, "tolg", 0.));
 #else
         printf("ERROR - attempting to use NLOPT_LD_LBFGS, but Luksan code disabled\n");
         return NLOPT_INVALID_ARGS;
